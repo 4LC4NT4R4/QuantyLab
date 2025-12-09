@@ -1,0 +1,60 @@
+# --- Python Padrão ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Distribuição e Instalação (pip install -e .) ---
+*.egg-info/
+.eggs/
+build/
+dist/
+develop-eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+venv/
+.venv/
+env/
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints/
+# Opcional: Se quiser ignorar os outputs dos notebooks para deixar o diff mais limpo:
+# *.ipynb_wasm
+
+# --- IDEs e Editores (VS Code, PyCharm, etc) ---
+.vscode/
+.idea/
+*.swp
+
+# ========================================
+#   ESPECÍFICO DO QUANTYLAB
+# ========================================
+
+# 1. Ignorar o executável do Quanty (Proteção de Licença)
+# Isso impede que o 'Quanty.exe' ou o binário Linux suba para o GitHub.
+# O usuário final deve baixar o Quanty dele e colocar nesta pasta.
+quanty_sim/quanty_win/*
+!quanty_sim/quanty_win/.gitkeep
+
+# 2. Ignorar pastas de saída das simulações (Resultados)
+# Você geralmente não quer versionar gigabytes de dados de saída.
+xas_output/
+rixs_output/
+
+# 3. Ignorar arquivos Lua gerados automaticamente
+# (CUIDADO: Não ignorar os templates originais!)
+input.lua
+*.spec
+
+# 4. Dados temporários ou grandes
+T400K/
+T75K/
+*.csv
+# Se quiser manter ALGUNS csvs (como dados atômicos), use '!' para exceção:
+!Ti4+_atomic_term.csv
+
+# --- Sistema Operacional ---
+.DS_Store
+Thumbs.db
