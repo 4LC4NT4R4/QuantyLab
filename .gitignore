@@ -21,7 +21,8 @@ env/
 # --- Jupyter Notebooks ---
 .ipynb_checkpoints/
 # Opcional: Se quiser ignorar os outputs dos notebooks para deixar o diff mais limpo:
-# *.ipynb_wasm
+ *.ipynb_wasm
+Notebooks/
 
 # --- IDEs e Editores (VS Code, PyCharm, etc) ---
 .vscode/

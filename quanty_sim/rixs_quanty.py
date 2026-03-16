@@ -49,11 +49,8 @@ class RIXS_sim:
         self.Parameters = {
             "Experiment": {
                 "Temperature": 10,
-                "SpectraToCalculate": "",
-                "Absorption": False,
-                "CircularDichroic": False,
-                "LinearDichroic": False,
-                "IsotropicAbsorption": True,
+                "Linear": False,
+                "Isotropic": True,
                 "NConfigurations": 1,
                 "SynchronizeHamiltonian": True,
                 "NPsis": 120,
@@ -85,11 +82,11 @@ class RIXS_sim:
         
             "Geometry": {
                 "WaveVectorIn": "{0, 0, 1}",
-                "EpsSigmaIn": "{0, 1, 0}",
-                "EpsPiIn": "{1, 0, 0}",
+                "EhIn": "{0, 1, 0}",
+                "EvIn": "{1, 0, 0}",
                 "WaveVectorOut": "{0, 0, 1}",
-                "EpsSigmaOut": "{0, 1, 0}",
-                "EpsPiOut": "{1, 0, 0}"
+                "EhOut": "{0, 1, 0}",
+                "EvOut": "{1, 0, 0}"
             }
         }
 
@@ -158,27 +155,101 @@ class RIXS_sim:
 
 
 
+    # def _set_symmetry(self, symmetry):
+    #     self.symmetry = symmetry
+
+
+    #     # Define o template automaticamente com base na simetria
+    #     if symmetry == 'Oh':
+    #         self.template_path = 'quanty_sim/Templates/Co2+_Oh_RIXS_2p3d.lua'
+    #     elif symmetry == 'D4h':
+    #         self.template_path = 'quanty_sim/Templates/Co2+_D4h_RIXS_2p3d.lua'
+    #     else:
+    #         raise ValueError(f"Simetria '{symmetry}' não reconhecida. Use 'Oh' ou 'D4h'.")
+
+
+
+    #     if self.symmetry == 'Oh':
+    #         self.CrystalField = {
+    #             'tenDq_3d_i': 1.0,
+    #             'tenDq_3d_m': 1.0,
+    #             'tenDq_3d_f': 1.0,
+    #         }
+    
+    #         self.LMCT = {
+    #             'Delta_3d_L1_i': 0.0, 'Delta_3d_L1_m': 0.0, 'Delta_3d_L1_f': 0.0,
+    #             'Dq_L1_i': 0.0, 'Vt2g_3d_L1_i': 0.0,
+    #             'Dq_L1_m': 0.0, 'Vt2g_3d_L1_m': 0.0,
+    #             'Dq_L1_f': 0.0, 'Vt2g_3d_L1_f': 0.0,
+    #             'Veg_3d_L1_i': 0.0, 'Veg_3d_L1_m': 0.0, 'Veg_3d_L1_f': 0.0
+    #         }
+            
+    
+    #         self.MLCT = {
+    #             'Delta_3d_L2_i': 0.0, 'Delta_3d_L2_m': 0.0, 'Delta_3d_L2_f': 0.0,
+    #             'Dq_L2_i': 0.0, 'Vt2g_3d_L2_i': 0.0, 'Veg_3d_L2_i': 0.0,
+    #             'Dq_L2_m': 0.0, 'Vt2g_3d_L2_m': 0.0, 'Veg_3d_L2_m': 0.0,
+    #             'Dq_L2_f': 0.0, 'Vt2g_3d_L2_f': 0.0, 'Veg_3d_L2_f': 0.0
+    #         }
+    
+    
+        
+        
+    #     elif self.symmetry == 'D4h':
+    #         self.CrystalField = {
+    #             'tenDq_3d_i': 1.0, 'Ds_3d_i': 0.0, 'Dt_3d_i': 0.0,
+    #             'tenDq_3d_m': 1.0, 'Ds_3d_m': 0.0, 'Dt_3d_m': 0.0,
+    #             'tenDq_3d_f': 1.0, 'Ds_3d_f': 0.0, 'Dt_3d_f': 0.0
+    #         }
+            
+    
+    #         self.LMCT = {
+    #             'Delta_3d_L1_i': 0.0, 'Delta_3d_L1_m': 0.0, 'Delta_3d_L1_f': 0.0,
+    #             'Dq_L1_i': 0.0, 'Ds_L1_i': 0.0, 'Dt_L1_i': 0.0,
+    #             'Dq_L1_m': 0.0, 'Ds_L1_m': 0.0, 'Dt_L1_m': 0.0,
+    #             'Dq_L1_f': 0.0, 'Ds_L1_f': 0.0, 'Dt_L1_f': 0.0,
+    #             'Va1g_3d_L1_i': 0.0, 'Va1g_3d_L1_m': 0.0, 'Va1g_3d_L1_f': 0.0,
+    #             'Vb1g_3d_L1_i': 0.0, 'Vb1g_3d_L1_m': 0.0, 'Vb1g_3d_L1_f': 0.0,
+    #             'Vb2g_3d_L1_i': 0.0, 'Vb2g_3d_L1_m': 0.0, 'Vb2g_3d_L1_f': 0.0,
+    #             'Veg_3d_L1_i': 0.0, 'Veg_3d_L1_m': 0.0, 'Veg_3d_L1_f': 0.0
+    #         }
+    
+    #         self.MLCT = {
+    #             'Delta_3d_L2_i': 0.0, 'Delta_3d_L2_m': 0.0, 'Delta_3d_L2_f': 0.0,
+    #             'Dq_L2_i': 0.0, 'Ds_L2_i': 0.0, 'Dt_L2_i': 0.0,
+    #             'Dq_L2_m': 0.0, 'Ds_L2_m': 0.0, 'Dt_L2_m': 0.0,
+    #             'Dq_L2_f': 0.0, 'Ds_L2_f': 0.0, 'Dt_L2_f': 0.0,
+    #             'Va1g_3d_L2_i': 0.0, 'Va1g_3d_L2_m': 0.0, 'Va1g_3d_L2_f': 0.0,
+    #             'Vb1g_3d_L2_i': 0.0, 'Vb1g_3d_L2_m': 0.0, 'Vb1g_3d_L2_f': 0.0,
+    #             'Vb2g_3d_L2_i': 0.0, 'Vb2g_3d_L2_m': 0.0, 'Vb2g_3d_L2_f': 0.0,
+    #             'Veg_3d_L2_i': 0.0, 'Veg_3d_L2_m': 0.0, 'Veg_3d_L2_f': 0.0
+    #         }
+        
+        
+    #     else:
+    #         raise ValueError(f"Unsupported crystal symmetry: {self.symmetry}")
+
     def _set_symmetry(self, symmetry):
         self.symmetry = symmetry
 
-
         # Define o template automaticamente com base na simetria
         if symmetry == 'Oh':
+            # note: armazenamos tanto template_path (possível caminho) quanto template_name (basename)
             self.template_path = 'quanty_sim/Templates/Co2+_Oh_RIXS_2p3d.lua'
+            self.template_name = Path(self.template_path).name  # 'Co2+_Oh_RIXS_2p3d.lua'
         elif symmetry == 'D4h':
             self.template_path = 'quanty_sim/Templates/Co2+_D4h_RIXS_2p3d.lua'
+            self.template_name = Path(self.template_path).name
         else:
             raise ValueError(f"Simetria '{symmetry}' não reconhecida. Use 'Oh' ou 'D4h'.")
 
-
-
+        # agora configuramos os parâmetros específicos por simetria (mantive seu conteúdo)
         if self.symmetry == 'Oh':
             self.CrystalField = {
                 'tenDq_3d_i': 1.0,
                 'tenDq_3d_m': 1.0,
                 'tenDq_3d_f': 1.0,
             }
-    
             self.LMCT = {
                 'Delta_3d_L1_i': 0.0, 'Delta_3d_L1_m': 0.0, 'Delta_3d_L1_f': 0.0,
                 'Dq_L1_i': 0.0, 'Vt2g_3d_L1_i': 0.0,
@@ -186,26 +257,19 @@ class RIXS_sim:
                 'Dq_L1_f': 0.0, 'Vt2g_3d_L1_f': 0.0,
                 'Veg_3d_L1_i': 0.0, 'Veg_3d_L1_m': 0.0, 'Veg_3d_L1_f': 0.0
             }
-            
-    
             self.MLCT = {
                 'Delta_3d_L2_i': 0.0, 'Delta_3d_L2_m': 0.0, 'Delta_3d_L2_f': 0.0,
                 'Dq_L2_i': 0.0, 'Vt2g_3d_L2_i': 0.0, 'Veg_3d_L2_i': 0.0,
                 'Dq_L2_m': 0.0, 'Vt2g_3d_L2_m': 0.0, 'Veg_3d_L2_m': 0.0,
                 'Dq_L2_f': 0.0, 'Vt2g_3d_L2_f': 0.0, 'Veg_3d_L2_f': 0.0
             }
-    
-    
-        
-        
+
         elif self.symmetry == 'D4h':
             self.CrystalField = {
                 'tenDq_3d_i': 1.0, 'Ds_3d_i': 0.0, 'Dt_3d_i': 0.0,
                 'tenDq_3d_m': 1.0, 'Ds_3d_m': 0.0, 'Dt_3d_m': 0.0,
                 'tenDq_3d_f': 1.0, 'Ds_3d_f': 0.0, 'Dt_3d_f': 0.0
             }
-            
-    
             self.LMCT = {
                 'Delta_3d_L1_i': 0.0, 'Delta_3d_L1_m': 0.0, 'Delta_3d_L1_f': 0.0,
                 'Dq_L1_i': 0.0, 'Ds_L1_i': 0.0, 'Dt_L1_i': 0.0,
@@ -216,7 +280,6 @@ class RIXS_sim:
                 'Vb2g_3d_L1_i': 0.0, 'Vb2g_3d_L1_m': 0.0, 'Vb2g_3d_L1_f': 0.0,
                 'Veg_3d_L1_i': 0.0, 'Veg_3d_L1_m': 0.0, 'Veg_3d_L1_f': 0.0
             }
-    
             self.MLCT = {
                 'Delta_3d_L2_i': 0.0, 'Delta_3d_L2_m': 0.0, 'Delta_3d_L2_f': 0.0,
                 'Dq_L2_i': 0.0, 'Ds_L2_i': 0.0, 'Dt_L2_i': 0.0,
@@ -227,11 +290,9 @@ class RIXS_sim:
                 'Vb2g_3d_L2_i': 0.0, 'Vb2g_3d_L2_m': 0.0, 'Vb2g_3d_L2_f': 0.0,
                 'Veg_3d_L2_i': 0.0, 'Veg_3d_L2_m': 0.0, 'Veg_3d_L2_f': 0.0
             }
-        
-        
+
         else:
             raise ValueError(f"Unsupported crystal symmetry: {self.symmetry}")
-
 
     def _synchronize_hamiltonians(self):
         if self.Parameters["Experiment"].get("SynchronizeHamiltonian", False):
@@ -276,14 +337,29 @@ class RIXS_sim:
 
 
     def _verify(self):
-        # """ Verifica se os parâmetros estão corretos """
-
+    
+        # Incident energy mode
         if self.IncidentEnergy is not None:
-            self.Parameters['Energy']['Emin1'] = self.IncidentEnergy 
+            self.Parameters['Energy']['Emin1'] = self.IncidentEnergy
             self.Parameters['Energy']['Emax1'] = self.IncidentEnergy + 0.0001
             self.Parameters['Energy']['NPoints1'] = 1
         else:
             print(f"Problem with IncidentEnergy = {self.IncidentEnergy}")
+    
+        # Spectra types
+        SpecTypes = []
+    
+        if self.Parameters['Experiment'].get('Isotropic', False):
+            SpecTypes.append("Isotropic")
+    
+        if self.Parameters['Experiment'].get('Linear', False):
+            SpecTypes.append("Linear")
+    
+        if not SpecTypes:
+            raise ValueError("At least one spectra type must be enabled.")
+    
+        lua_list = ", ".join(f'"{t}"' for t in SpecTypes)
+        self.Parameters['Experiment']['SpectraToCalculate'] = f'{{{lua_list}}}'
 
         if self.HamiltonianTerms['LmctLigandsHybridizationTerm'] == 'true' or self.HamiltonianTerms['MlctLigandsHybridizationTerm'] == 'true':
             self.Parameters['Experiment']['NConfigurations'] = 2
@@ -359,22 +435,72 @@ class RIXS_sim:
         print_dict_section("Elétrons", self.Electrons)
 
 
+    # def generate_lua_script(self, template_path=None, output_filename="rixs_output/input.lua"):
+    #     self._verify()
+    #     self._verify_hamiltonians()
+        
+    #     if template_path is None:
+    #         # Usa o nome do template definido em _set_symmetry
+    #         template_path = getattr(self, "template_name", None)
+            
+    #     if template_path is None:
+    #          raise ValueError("Nenhum template especificado e nenhum padrão definido.")
+
+    #     # Carrega o template usando o env global (configurado com PackageLoader)
+    #     try:
+    #         template = env.get_template(template_path)
+    #     except Exception as e:
+    #         raise FileNotFoundError(f"Erro ao carregar o template '{template_path}': {e}")
+
+    #     context = {
+    #         "Parameters": self.Parameters,
+    #         "ScaleFactors": self.ScaleFactors,
+    #         "CrystalField": self.CrystalField,
+    #         "LMCT": self.LMCT,
+    #         "MLCT": self.MLCT,
+    #         "HamiltonianTerms": self.HamiltonianTerms,
+    #         "InitialHamiltonian": self.InitialHamiltonian,
+    #         "MiddleHamiltonian": self.MiddleHamiltonian,
+    #         "FinalHamiltonian": self.FinalHamiltonian,
+    #         "Electrons": self.Electrons,
+    #         "filename": self.filename,
+    #     }
+
+    #     rendered_script = template.render(context)
+
+    #     # Pathlib para criação de diretórios e arquivos
+    #     output_path = Path(output_filename)
+    #     output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    #     with open(output_path, 'w') as f:
+    #         f.write(rendered_script)
+
+
     def generate_lua_script(self, template_path=None, output_filename="rixs_output/input.lua"):
         self._verify()
         self._verify_hamiltonians()
-        
-        if template_path is None:
-            # Usa o nome do template definido em _set_symmetry
-            template_path = getattr(self, "template_name", None)
-            
-        if template_path is None:
-             raise ValueError("Nenhum template especificado e nenhum padrão definido.")
 
-        # Carrega o template usando o env global (configurado com PackageLoader)
+        # Resolve o template solicitado (parâmetro) ou o padrão definido no objeto
+        if template_path is None:
+            # tenta primeiro template_name (basename), depois template_path (possível caminho completo)
+            template_candidate = getattr(self, "template_name", None) or getattr(self, "template_path", None)
+        else:
+            template_candidate = template_path
+
+        if not template_candidate:
+            raise ValueError("Nenhum template especificado e nenhum padrão definido.")
+
+        # Se for um ficheiro local existente, carrega diretamente do ficheiro
+        template_file = Path(template_candidate)
         try:
-            template = env.get_template(template_path)
+            if template_file.exists():
+                template_text = template_file.read_text(encoding='utf8')
+                template = env.from_string(template_text)
+            else:
+                # tenta carregar pelo nome (compatível com PackageLoader)
+                template = env.get_template(Path(template_candidate).name)
         except Exception as e:
-            raise FileNotFoundError(f"Erro ao carregar o template '{template_path}': {e}")
+            raise FileNotFoundError(f"Erro ao carregar o template '{template_candidate}': {e}")
 
         context = {
             "Parameters": self.Parameters,
@@ -396,49 +522,136 @@ class RIXS_sim:
         output_path = Path(output_filename)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_path, 'w') as f:
+        with open(output_path, 'w', encoding='utf8') as f:
             f.write(rendered_script)
 
-    def run_quanty(self, input_filename='input.lua', input_dir=None, output_dir='rixs_output', print_output=True):
-        # ... (parte inicial de detecção do executável igual) ...
-        # (Copie a parte inicial do código anterior se precisar, mas o foco é abaixo)
 
-        # ...
+    # def run_quanty(self, input_filename='input.lua', input_dir=None, output_dir='rixs_output', print_output=True):
+        
+
+    #     quanty_exec = getattr(self, "quanty_path", None)
+
+    #     if not quanty_exec:
+    #         raise FileNotFoundError("❌ Erro: O executável do Quanty não foi encontrado.")
+
+    #     # 2. Configura caminhos
+    #     if input_dir is None:
+    #         input_dir = 'rixs_output'
+            
+    #     input_dir_path = Path(input_dir)
+    #     output_dir_path = Path(output_dir)
+        
+    #     fname = input_filename
+    #     if not fname.endswith('.lua'): fname += '.lua'
+
+    #     input_file_path = input_dir_path / fname
+        
+    #     if not input_file_path.exists():
+    #         raise FileNotFoundError(f"O arquivo de entrada '{input_file_path}' não foi encontrado.")
+            
+    #     output_dir_path.mkdir(parents=True, exist_ok=True)
+        
+    #     # --- CORREÇÃO AQUI ---
+    #     destination_input = output_dir_path / fname
+        
+    #     # Só copia se os caminhos forem diferentes
+    #     if input_file_path.resolve() != destination_input.resolve():
+    #         shutil.copy(input_file_path, destination_input)
+
+    #     try:
+    #         result = subprocess.run(
+    #             [quanty_exec, fname],
+    #             capture_output=True,
+    #             text=True,
+    #             cwd=str(output_dir_path),
+    #             timeout=300
+    #         )
+
+    #         if print_output:
+    #             print("🔹 Saída do Quanty:")
+    #             print(result.stdout)
+    #             if result.stderr:
+    #                 print("🔻 Erros do Quanty:")
+    #                 print(result.stderr)
+            
+    #         # Chama o parser
+    #         self._parse_quanty_output(result.stdout)
+            
+    #     except subprocess.TimeoutExpired:
+    #         print(f"⚠️ Timeout ao rodar {fname}.")
+    #     except Exception as e:
+    #          print(f"❌ Erro na execução: {e}")
+
+    # def _parse_quanty_output(self, stdout):
+    #     match = re.search(r"Analysis of the initial Hamiltonian:(.*?)(?:\n\n|\Z)", stdout, flags=re.S)
+    #     if match:
+    #         table_text = match.group(1).strip()
+    #         lines = [line for line in table_text.splitlines() if not line.startswith("=") and line.strip()]
+    #         table_clean = "\n".join(lines)
+    #         try:
+    #             self.output = pd.read_csv(StringIO(table_clean), sep=r'\s+')
+    #         except Exception as e:
+    #             print(f"Erro ao ler tabela de output: {e}")
+    #     else:
+    #          print("Aviso: Tabela 'Analysis of the initial Hamiltonian' não encontrada no output.")
+
+
+    def run_quanty(self, input_filename='input.lua', input_dir='rixs_output', output_dir='rixs_output', print_output=True):
+        # -----------------------------------------
+        # 1. Determina o executável do Quanty
+        # -----------------------------------------
+        quanty_exec = getattr(self, "quanty_path", None)
+
+        if not quanty_exec:
+            try:
+                # Procura no pacote
+                exe_resource = importlib.resources.files(PACKAGE_NAME) / 'quanty_win' / 'Quanty' 
+                if not exe_resource.exists():
+                     exe_resource = importlib.resources.files(PACKAGE_NAME) / 'quanty_win' / 'Quanty.exe'
+                
+                if exe_resource.exists():
+                    with importlib.resources.as_file(exe_resource) as exe_path:
+                        quanty_exec = str(exe_path)
+            except Exception:
+                pass
+
+        if not quanty_exec or not os.path.exists(quanty_exec):
+             quanty_exec = shutil.which("Quanty") or shutil.which("quanty")
+
         if not quanty_exec:
             raise FileNotFoundError("❌ Erro: O executável do Quanty não foi encontrado.")
 
-        # 2. Configura caminhos
-        if input_dir is None:
-            input_dir = 'rixs_output'
-            
-        input_dir_path = Path(input_dir)
-        output_dir_path = Path(output_dir)
+        # -----------------------------------------
+        # 2. Execução
+        # -----------------------------------------
+        input_dir_path = Path(input_dir or ".")
+        output_dir_path = Path(output_dir or ".")
         
-        fname = input_filename
+        fname = input_filename or self.filename
         if not fname.endswith('.lua'): fname += '.lua'
-
+        
         input_file_path = input_dir_path / fname
         
         if not input_file_path.exists():
-            raise FileNotFoundError(f"O arquivo de entrada '{input_file_path}' não foi encontrado.")
+            raise FileNotFoundError(f"Arquivo Lua não encontrado: {input_file_path}")
             
         output_dir_path.mkdir(parents=True, exist_ok=True)
         
         # --- CORREÇÃO AQUI ---
         destination_input = output_dir_path / fname
         
-        # Só copia se os caminhos forem diferentes
+        # Só copia se os caminhos forem diferentes (evita SameFileError)
+        # .resolve() garante que estamos comparando caminhos absolutos reais
         if input_file_path.resolve() != destination_input.resolve():
             shutil.copy(input_file_path, destination_input)
-
+        
         try:
             result = subprocess.run(
                 [quanty_exec, fname],
                 capture_output=True,
                 text=True,
-                cwd=str(output_dir_path),
-                timeout=300
-            )
+                cwd=str(output_dir_path), 
+                timeout=300)
 
             if print_output:
                 print("🔹 Saída do Quanty:")
@@ -447,15 +660,15 @@ class RIXS_sim:
                     print("🔻 Erros do Quanty:")
                     print(result.stderr)
             
-            # Chama o parser
             self._parse_quanty_output(result.stdout)
-            
+
         except subprocess.TimeoutExpired:
             print(f"⚠️ Timeout ao rodar {fname}.")
         except Exception as e:
              print(f"❌ Erro na execução: {e}")
 
     def _parse_quanty_output(self, stdout):
+        """Método auxiliar para limpar o código principal"""
         match = re.search(r"Analysis of the initial Hamiltonian:(.*?)(?:\n\n|\Z)", stdout, flags=re.S)
         if match:
             table_text = match.group(1).strip()
@@ -464,6 +677,7 @@ class RIXS_sim:
             try:
                 self.output = pd.read_csv(StringIO(table_clean), sep=r'\s+')
             except Exception as e:
-                print(f"Erro ao ler tabela de output: {e}")
+                 print(f"Erro ao ler tabela de output: {e}")
         else:
+             # Não levantar erro aqui permite ver o print do stdout para debug
              print("Aviso: Tabela 'Analysis of the initial Hamiltonian' não encontrada no output.")

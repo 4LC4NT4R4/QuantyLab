@@ -33,8 +33,8 @@ Gaussian1 = {{Parameters.Energy.Gaussian1}} -- 0.1 -- Gaussian FWHM (eV).
 Gamma1 = {{Parameters.Energy.Gamma1}} -- Lorentzian FWHM used in the spectra calculation (eV).
 
 WaveVectorIn = {{Parameters.Geometry.WaveVectorIn}} -- Incident wave vector.
-EpsSigmaIn = {{Parameters.Geometry.EpsSigmaIn}} -- Incident sigma polarization.
-EpsPiIn = {{Parameters.Geometry.EpsPiIn}} -- Incident pi polarization.
+EhIn = {{Parameters.Geometry.EhIn}} -- Incident sigma polarization.
+EvIn = {{Parameters.Geometry.EvIn}} -- Incident pi polarization.
 
 -- Y-axis Parameters.
 Emin2 = {{Parameters.Energy.Emin2}} -- Minimum value of the energy range (eV).
@@ -46,10 +46,20 @@ Gaussian2 = {{Parameters.Energy.Gaussian2}} -- 0.1 -- Gaussian FWHM (eV).
 Gamma2 = {{Parameters.Energy.Gamma2}} -- Lorentzian FWHM used in the spectra calculation (eV).
 
 WaveVectorOut = {{Parameters.Geometry.WaveVectorOut}} -- Scattered wave vector.
-EpsSigmaOut = {{Parameters.Geometry.EpsSigmaOut}} -- Scattered sigma polarization.
-EpsPiOut = {{Parameters.Geometry.EpsPiOut}} -- Scattered pi polarization.
+EhOut = {{Parameters.Geometry.EvOut}} -- Scattered sigma polarization.
+EvOut = {{Parameters.Geometry.EhOut}} -- Scattered pi polarization.
 
-SpectraToCalculate = {"Resonant Inelastic"}  -- Types of spectra to calculate.
+SpectraToCalculate = {{Parameters.Experiment.SpectraToCalculate}} -- Types of spectra to calculate. #Linear o Isotropic
+
+function Contains(list, value)
+    for i = 1, #list do
+        if list[i] == value then
+            return true
+        end
+    end
+    return false
+end
+
 DenseBorder = 2000 -- Number of determinants where we switch from dense methods to sparse methods.
 ShiftSpectra = true -- If enabled, shift the spectra in the experimental energy range.
 
@@ -909,31 +919,109 @@ end
 
 
 
-if CalculationRestrictions == nil then
-    G = CreateResonantSpectra({{'H_m, H_f, T_2p_3d, T_3d_2p, Psis_i, {{"Emin1", Emin1}, {"Emax1", Emax1}, {"NE1", NPoints1}, {"Gamma1", Gamma1}, {"Emin2", Emin2}, {"Emax2", Emax2}, {"NE2", NPoints2}, {"Gamma2", Gamma2}, {"DenseBorder", DenseBorder}}'}})
-else
-    G = CreateResonantSpectra({{'H_m, H_f, T_2p_3d, T_3d_2p, Psis_i, {{"Emin1", Emin1}, {"Emax1", Emax1}, {"NE1", NPoints1}, {"Gamma1", Gamma1}, {"Emin2", Emin2}, {"Emax2", Emax2}, {"NE2", NPoints2}, {"Gamma2", Gamma2}, {"Restrictions1", CalculationRestrictions}, {"Restrictions2", CalculationRestrictions}, {"DenseBorder", DenseBorder}}'}})
-end
 
 
-Giso = 0
-Shift = 0
-for i = 1, #Psis_i do
-    for j = 1, #T_2p_3d * #T_3d_2p do
-        Indexes = {}
-        for k = 1, NPoints1 + 1 do
-            table.insert(Indexes, k + Shift)
-        end
-        Giso = Giso + Spectra.Element(G, Indexes) * dZ_i[i]
-        Shift = Shift + NPoints1 + 1
+if Contains(SpectraToCalculate, "Isotropic") == true then
+
+    if CalculationRestrictions == nil then
+        G = CreateResonantSpectra({{'H_m, H_f, T_2p_3d, T_3d_2p, Psis_i, {{"Emin1", Emin1}, {"Emax1", Emax1}, {"NE1", NPoints1}, {"Gamma1", Gamma1}, {"Emin2", Emin2}, {"Emax2", Emax2}, {"NE2", NPoints2}, {"Gamma2", Gamma2}, {"DenseBorder", DenseBorder}}'}})
+    else
+        G = CreateResonantSpectra({{'H_m, H_f, T_2p_3d, T_3d_2p, Psis_i, {{"Emin1", Emin1}, {"Emax1", Emax1}, {"NE1", NPoints1}, {"Gamma1", Gamma1}, {"Emin2", Emin2}, {"Emax2", Emax2}, {"NE2", NPoints2}, {"Gamma2", Gamma2}, {"Restrictions1", CalculationRestrictions}, {"Restrictions2", CalculationRestrictions}, {"DenseBorder", DenseBorder}}'}})
     end
+    
+    Giso = 0
+    Shift = 0
+    for i = 1, #Psis_i do
+        for j = 1, #T_2p_3d * #T_3d_2p do
+            Indexes = {}
+            for k = 1, NPoints1 + 1 do
+                table.insert(Indexes, k + Shift)
+            end
+            Giso = Giso + Spectra.Element(G, Indexes) * dZ_i[i]
+            Shift = Shift + NPoints1 + 1
+        end
+    end
+
+    -- The Gaussian broadening is done using the same value for the two dimensions.
+    Gaussian = math.min(Gaussian1, Gaussian2)
+    if Gaussian ~= 0 then
+        Giso.Broaden(Gaussian, 0.0)
+    end
+    
+    Giso = -1 / math.pi * Giso
+    Giso.Print({{'{{"file", Prefix .. "_iso.spec"}}'}})
+
 end
 
--- The Gaussian broadening is done using the same value for the two dimensions.
-Gaussian = math.min(Gaussian1, Gaussian2)
-if Gaussian ~= 0 then
-    Giso.Broaden(Gaussian, 0.0)
+if Contains(SpectraToCalculate, "Isotropic") == true then
+
+    Tin_h =
+          EhIn[1] * Tx_2p_3d
+        + EhIn[2] * Ty_2p_3d
+        + EhIn[3] * Tz_2p_3d
+    
+    Tin_v =
+          EvIn[1] * Tx_2p_3d
+        + EvIn[2] * Ty_2p_3d
+        + EvIn[3] * Tz_2p_3d
+
+    Tout_h =
+          EhOut[1] * Tx_3d_2p
+        + EhOut[2] * Ty_3d_2p
+        + EhOut[3] * Tz_3d_2p
+    
+    Tout_v =
+          EvOut[1] * Tx_3d_2p
+        + EvOut[2] * Ty_3d_2p
+        + EvOut[3] * Tz_3d_2p
+        
+    Tin  = {Tin_h, Tin_v}
+    Tout = {Tout_h, Tout_v}
+
+
+    if CalculationRestrictions == nil then
+        G = CreateResonantSpectra({{'H_m, H_f, Tin, Tout, Psis_i, {{"Emin1", Emin1}, {"Emax1", Emax1}, {"NE1", NPoints1}, {"Gamma1", Gamma1}, {"Emin2", Emin2}, {"Emax2", Emax2}, {"NE2", NPoints2}, {"Gamma2", Gamma2}, {"DenseBorder", DenseBorder}}'}})
+    else
+        G = CreateResonantSpectra({{'H_m, H_f, Tin, Tout, Psis_i, {{"Emin1", Emin1}, {"Emax1", Emax1}, {"NE1", NPoints1}, {"Gamma1", Gamma1}, {"Emin2", Emin2}, {"Emax2", Emax2}, {"NE2", NPoints2}, {"Gamma2", Gamma2}, {"Restrictions1", CalculationRestrictions}, {"Restrictions2", CalculationRestrictions}, {"DenseBorder", DenseBorder}}'}})
+    end
+    G_h = 0
+    G_v = 0
+    Shift = 0
+    
+    for i = 1, #Psis_i do
+        for j = 1, #Tin * #Tout do
+    
+            Indexes = {}
+            for k = 1, NPoints1 + 1 do
+                table.insert(Indexes, k + Shift)
+            end
+    
+            Spec = Spectra.Element(G, Indexes) * dZ_i[i]
+    
+            if j <= 2 then
+                G_h = G_h + Spec
+            else
+                G_v = G_v + Spec
+            end
+    
+            Shift = Shift + NPoints1 + 1
+        end
+    end
+
+
+    Gaussian = math.min(Gaussian1, Gaussian2)
+    
+    if Gaussian ~= 0 then
+        G_h.Broaden(Gaussian, 0.0)
+        G_v.Broaden(Gaussian, 0.0)
+    end
+    
+    G_h = -1 / math.pi * G_h
+    G_v = -1 / math.pi * G_v
+
+    G_h.Print({{'{{"file", Prefix .. "_h.spec"}}'}})
+    G_v.Print({{'{{"file", Prefix .. "_v.spec"}}'}})
+    
 end
 
-Giso = -1 / math.pi * Giso
-Giso.Print({{'{{"file", Prefix .. "_iso.spec"}}'}})
+

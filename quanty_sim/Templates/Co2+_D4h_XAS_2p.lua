@@ -401,6 +401,9 @@ Lx = Lx_3d
 Ly = Ly_3d
 Lz = Lz_3d
 
+Mx = Lx+2*Sx
+My = Ly+2
+
 Jx = Jx_3d
 Jy = Jy_3d
 Jz = Jz_3d
@@ -773,7 +776,35 @@ if MlctLigandsHybridizationTerm then
     Header = Header .. "===========================================================================================================================================\n"
     Footer = "===========================================================================================================================================\n"
 end
+--------------------------------------------------------------------------------
+-- Printers
+--------------------------------------------------------------------------------
+function print_spin_operators(Sx, Sy, Sz, Ssqr, psi_i, Npsis)
+    Header = string.format("%10s %10s %10s %10s %10s", "State", "Sx", "Sy", "Sz", "Ssqr")
+    print(Header)
+    for i=1, Npsis do
+    print(string.format("%10.0f %10.4f  %10.4f  %10.4f %10.4f", i, Complex.Re(psi_i[i] * Sx * psi_i[i]), Complex.Re(psi_i[i] * Sy * psi_i[i]), Complex.Re(psi_i[i] * Sz * psi_i[i]), Complex.Re(psi_i[i] * Ssqr * psi_i[i])))
+    end
+end
 
+
+function print_orbital_operators(Lx, Ly, Lz, Lsqr, psi_i, Npsis)
+    Header = string.format("%10s %10s %10s %10s %10s", "State", "Lx", "Ly", "Lz", "Lsqr")
+    print(Header)
+    for i=1, Npsis do
+    print(string.format("%10.0f %10.4f  %10.4f  %10.4f %10.4f", i, Complex.Re(psi_i[i] * Lx * psi_i[i]), Complex.Re(psi_i[i] * Ly * psi_i[i]), Complex.Re(psi_i[i] * Lz * psi_i[i]), Complex.Re(psi_i[i] * Lsqr * psi_i[i])))
+    end
+end
+
+function print_total_operators(Jx, Jy, Jz, Jsqr, psi_i, Npsis)
+    Header = string.format("%10s %10s %10s %10s %10s", "State", "Jx", "Jy", "Jz", "Jsqr")
+    print(Header)
+    for i=1, Npsis do
+    print(string.format("%10.0f %10.4f  %10.4f  %10.4f %10.4f", i, Complex.Re(psi_i[i] * Jx * psi_i[i]), Complex.Re(psi_i[i] * Jy * psi_i[i]), Complex.Re(psi_i[i] * Jz * psi_i[i]), Complex.Re(psi_i[i] * Jsqr * psi_i[i])))
+    end
+end
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 local Psis_i, dZ_i = WavefunctionsAndBoltzmannFactors(H_i, NPsis, NPsisAuto, Temperature, nil, InitialRestrictions, CalculationRestrictions)
 PrintHamiltonianAnalysis(Psis_i, Operators, dZ_i, string.format(Header, "initial"), Footer)
 
